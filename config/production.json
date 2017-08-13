@@ -1,0 +1,10 @@
+{
+  "port": 3000,
+  "jwt":{
+    "sk": "1DF38E4E2358492445C73F77C234F",
+    "exp": {
+      "expiresIn": "12h"
+    }
+  },
+  "apiUrl": "http://node.locomote.com/code-task/"
+}
