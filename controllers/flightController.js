@@ -1,15 +1,18 @@
 'use strict'
 
 const http = require('http'),
-      Airport = require('../models/flightSearch'),
-      airport = new Airport(),
-      co = require('co');
+      FlightSearch = require('../models/flightSearch'),
+      flight = new FlightSearch(),
+      co = require('co'),
+      _ = require('lodash'),
+      config = require('config');
 
 // Controller list of airports
 exports.airportList = (req, res) => {
   let q = req.params.q ? req.params.q : "";
   co(function *() {
-    let airportList = yield airport.airports(q);
+    let url = `${config.get("apiUrl.base")}${config.get("apiUrl.aiports")}?q=${q}`;
+    let airportList = yield flight.getAPIresults(url);
     res.json({
       code:0,
       res:airportList
@@ -28,10 +31,11 @@ exports.airportList = (req, res) => {
 exports.searchAirline = (req, res) => {
   let q = req.params.q ? req.params.q : "";
   co(function *() {
-    let airportList = yield airport.airlines(q);
+    let url = `${config.get("apiUrl.base")}${config.get("apiUrl.airlines")}`;
+    let airlineList = yield flight.getAPIresults(url);
     res.json({
       code:0,
-      res:airportList
+      res:airlineList
     });
   })
   .catch((err) => {
@@ -50,10 +54,12 @@ exports.searchFlights = (req, res, next) => {
       dt = req.query.dt ? req.query.dt.replace(/[/]/g,'-') : '',
       code = req.query.ac;
   co(function *() {
-    let airportList = yield airport.flights(code, dt, frm, to);
+    let url = `${config.get("apiUrl.base")}${config.get("apiUrl.search")}/${code}/?date=${dt}&from=${frm}&to=${to}`;
+    let flightList = yield flight.getAPIresults(url);
+    flightList = _.sortBy(flightList, ['price', 'start.dateTime']);
     res.json({
       code:0,
-      res:airportList
+      res:flightList
     });
   })
   .catch((err) => {

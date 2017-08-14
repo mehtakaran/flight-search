@@ -61,6 +61,10 @@
     animation: spin 2s linear infinite;
 }
 
+.align-center {
+  margin:10% auto
+}
+
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
